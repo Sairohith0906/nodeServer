@@ -1,26 +1,39 @@
-const { Console } = require('console');
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-require('dotenv').config()
+const twilio = require('twilio')(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
-const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
+// Enable CORS for all requests
+app.use(cors());
 
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// Generate a 4-digit OTP
+function generateOtp() {
+  return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
+app.get('/send-otp', async (req, res) => {
+  const otp = generateOtp();
 
-const otp = getRandomInt(1000, 9999); // 4-digit OTP
-
-
-
-async function sendMessage(){
-    const message=await twilio.messages.create({
-        body:'hello, i am sai rohith',
-        from:'+16294654446',
-        to:process.env.PHONE_NUMBER
+  try {
+    const message = await twilio.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: '+16294654446', // Replace with your Twilio phone number
+      to: process.env.PHONE_NUMBER,
     });
-    console.log(message);
-}
 
-sendMessage();
+    console.log('✅ OTP sent:', otp);
+    res.json({ otp }); // For dev only
+  } catch (err) {
+    console.error('❌ Error sending OTP:', err);
+    res.status(500).json({ error: 'Failed to send OTP' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('🚀 Server running on port 3000');
+});
