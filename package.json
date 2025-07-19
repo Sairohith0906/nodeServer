@@ -5,5 +5,16 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "twilio": "^5.7.3"
-  }
+  },
+  "name": "lib",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
